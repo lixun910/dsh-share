@@ -197,62 +197,14 @@ section + section { border-top: 1px solid var(--border); }
 
 /* ---------- iPad section ---------- */
 .ipad-wrap { text-align: center; }
-
-/* CSS iPad frame */
-.ipad {
-  position: relative;
-  display: inline-block;
-  background: linear-gradient(145deg, #1d1d22, #0a0a0c 55%);
-  border-radius: 44px;
-  padding: 20px;
-  box-shadow:
-    0 3px 8px rgba(0, 0, 0, 0.6),
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 1px rgba(255, 255, 255, 0.04),
-    inset 0 0 0 1px #2c2c31,
-    inset 0 0 0 3px #000;
-}
-.ipad .screen {
-  position: relative;
-  border-radius: 28px;
-  overflow: hidden;
-  background: #fff;
-  line-height: 0;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
-}
-.ipad .screen img { width: 100%; height: auto; display: block; }
-/* subtle glass reflection over the screen */
-.ipad .screen::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.05) 38%, transparent 58%);
-  pointer-events: none;
-  z-index: 3;
-}
-/* camera dot on the bezel (iPads have no dynamic island) */
-.ipad .cam {
-  position: absolute;
-  top: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #101014;
-  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.18);
-  z-index: 3;
-}
-.ipad .home {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 110px;
-  height: 5px;
-  background: rgba(0, 0, 0, 0.55);
-  border-radius: 3px;
-  z-index: 2;
+.ipadshot {
+  display: block;
+  max-width: 680px;
+  width: 100%;
+  margin: 0 auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
 }
 
 /* ---------- Features ---------- */
@@ -302,7 +254,5 @@ footer .built { margin-top: 8px; font-size: 12px; opacity: 0.8; }
   .nav-links a:not(.btn-ghost) { display: none; }
   .hero { padding: 48px 0 40px; }
   section { padding: 40px 0; }
-  .ipad { border-radius: 32px; padding: 14px; }
-  .ipad .screen { border-radius: 20px; }
 }
 
