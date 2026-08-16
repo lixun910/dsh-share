@@ -1,0 +1,149 @@
+name: update-dsh
+
+# Daily check for a new @deepseek-ai/dsh release. When one exists, bumps all
+# @deepseek-ai/* deps (and any new harness packages) in a PR, waits for the
+# build to pass, auto-merges, cuts a v* release tag, and repoints the gh-pages
+# download buttons. Fully automatic — no human step.
+#
+# Recovery: if a previous run merged the PR but failed to cut the release
+# (e.g. the tag push failed), the "Check release tag" step detects the missing
+# tag and the release steps run without a new PR.
+
+on:
+  schedule:
+    - cron: '23 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: update-dsh
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # need all tags for the version bump
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for dsh updates
+        run: node scripts/update-dsh.js
+
+      - name: Detect changes
+        id: check
+        run: |
+          if git diff --quiet package.json package-lock.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Read version
+        id: version
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Check release tag
+        id: tag
+        run: |
+          if git rev-parse -q --verify "refs/tags/v${{ steps.version.outputs.version }}" >/dev/null; then
+            echo "missing=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "missing=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create pull request
+        if: steps.check.outputs.changed == 'true'
+        id: pr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: deps/dsh-update
+          title: 'chore: bump @deepseek-ai/dsh to ${{ steps.version.outputs.version }}'
+          commit-message: 'chore: bump @deepseek-ai/dsh to ${{ steps.version.outputs.version }}'
+          delete-branch: true
+          body: |
+            Automated update of the bundled DeepSeek Harness.
+
+            - Bumps all `@deepseek-ai/*` dependencies to the latest version
+            - Adds any new harness packages as direct dependencies
+            - Bumps the app version to `${{ steps.version.outputs.version }}`
+
+            CI builds all three platforms on this PR. It merges automatically
+            when green, then cuts a release.
+
+      - name: Wait for CI and merge
+        if: steps.check.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_NUM="${{ steps.pr.outputs.pull-request-number }}"
+          echo "Waiting for checks on PR #$PR_NUM"
+          ALL_PASSED=0
+          for i in $(seq 1 80); do
+            BUCKETS=$(gh pr checks "$PR_NUM" --json bucket --jq '.[].bucket' 2>/dev/null | sort -u)
+            if [ -z "$BUCKETS" ]; then
+              echo "  no checks yet (attempt $i)"
+            elif echo "$BUCKETS" | grep -qx "fail"; then
+              echo "  checks failed: $(echo $BUCKETS | tr '\n' ' ')"
+              exit 1
+            elif echo "$BUCKETS" | grep -qx "cancel"; then
+              echo "  checks cancelled: $(echo $BUCKETS | tr '\n' ' ')"
+              exit 1
+            elif ! echo "$BUCKETS" | grep -qx "pending"; then
+              echo "  all checks passed: $(echo $BUCKETS | tr '\n' ' ')"
+              ALL_PASSED=1
+              break
+            else
+              echo "  checks in progress: $(echo $BUCKETS | tr '\n' ' ')"
+            fi
+            sleep 30
+          done
+          if [ "$ALL_PASSED" != "1" ]; then
+            echo "Timed out waiting for checks on PR #$PR_NUM"
+            exit 1
+          fi
+          echo "Merging PR #$PR_NUM"
+          gh pr merge "$PR_NUM" --squash --delete-branch
+
+      - name: Cut release
+        if: steps.check.outputs.changed == 'true' || steps.tag.outputs.missing == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          git fetch origin main
+          git checkout -B main origin/main
+          if git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null; then
+            echo "Tag v$VERSION already exists — skipping"
+          else
+            git tag "v$VERSION"
+            git push origin "v$VERSION"
+            echo "Pushed tag v$VERSION"
+          fi
+
+      - name: Update gh-pages download buttons
+        if: steps.check.outputs.changed == 'true' || steps.tag.outputs.missing == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          git fetch origin gh-pages
+          git worktree add /tmp/gh-pages gh-pages
+          node scripts/update-gh-pages.js "$VERSION" /tmp/gh-pages/index.html
+          cd /tmp/gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Point download buttons at v${VERSION} release assets"
+          git push origin gh-pages

@@ -140,6 +140,25 @@ every push/PR, and creates a GitHub release with all artifacts when you push a
 `v*` tag. Add the signing secrets above to the repo's Actions secrets to get
 signed/notarized builds.
 
+### Automatic harness updates
+
+`.github/workflows/update-dsh.yml` runs daily (and on manual dispatch) and keeps
+the bundled DeepSeek Harness current with **no manual steps**:
+
+1. `scripts/update-dsh.js` checks npm for the latest `@deepseek-ai/dsh`. If a
+   new version exists, it bumps every `@deepseek-ai/*` dependency, adds any
+   **new** harness packages as direct dependencies (electron-builder drops
+   peerDependencies, so they must be direct deps to hoist), and bumps the app
+   version to the next patch after the latest `v*` tag.
+2. It opens a PR; `build.yml` builds all three platforms on it.
+3. When the build passes, the PR is auto-merged, a `v*` release tag is cut
+   (which triggers the release job), and the gh-pages download buttons are
+   repointed at the new assets.
+
+If a previous run merged the PR but failed to cut the release, the next run
+detects the missing tag and cuts it without a new PR. Run it manually anytime
+with **Actions → update-dsh → Run workflow**.
+
 ## How it works (under the hood)
 
 ```
