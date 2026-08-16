@@ -152,8 +152,8 @@ the bundled DeepSeek Harness current with **no manual steps**:
    version to the next patch after the latest `v*` tag.
 2. It opens a PR; `build.yml` builds all three platforms on it.
 3. When the build passes, the PR is auto-merged, a `v*` release tag is cut
-   (which triggers the release job), and the gh-pages download buttons are
-   repointed at the new assets.
+   (which triggers the release job), and the gh-pages download buttons and the
+   "Bundled DeepSeek Harness" version note are updated.
 
 If a previous run merged the PR but failed to cut the release, the next run
 detects the missing tag and cuts it without a new PR. Run it manually anytime

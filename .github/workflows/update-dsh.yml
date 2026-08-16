@@ -138,9 +138,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION=${{ steps.version.outputs.version }}
+          DSH_VERSION=$(node -p "require('./package.json').dependencies['@deepseek-ai/dsh'].replace(/^\^/, '')")
           git fetch origin gh-pages
           git worktree add /tmp/gh-pages gh-pages
-          node scripts/update-gh-pages.js "$VERSION" /tmp/gh-pages/index.html
+          node scripts/update-gh-pages.js "$VERSION" "$DSH_VERSION" /tmp/gh-pages/index.html
           cd /tmp/gh-pages
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
