@@ -73,23 +73,11 @@
       <h2>How it works</h2>
       <p>No ngrok account, no Cloudflare token, no settings to configure.</p>
     </div>
-    <div class="steps">
-      <div class="step">
-        <span class="num">1</span>
-        <h3>Start</h3>
-        <p>Click <strong>Start</strong>. dsh-share launches dsh web, puts a local basic-auth proxy in front of it, and opens a free Cloudflare quick tunnel.</p>
-      </div>
-      <div class="step">
-        <span class="num">2</span>
-        <h3>Scan</h3>
-        <p>Scan the QR code from your phone to access dsh with the generated username / password.</p>
-      </div>
-      <div class="step">
-        <span class="num">3</span>
-        <h3>Connect</h3>
-        <p>Open the public URL on any device — phone, tablet, or laptop — and sign in with the generated credentials. That's it.</p>
-      </div>
-    </div>
+    <img class="howshot" src="images/dsh-how-it-works.jpeg" alt="dsh-share architecture: your desktop runs dsh-share, which starts the dsh web server, a local basic-auth proxy, and a cloudflared quick tunnel; Cloudflare terminates TLS and routes HTTPS to your machine; any device opens the public URL and authenticates with the generated username and password">
+    <p class="caption">
+      Your desktop → Cloudflare → any device. The tunnel is free, needs no account,
+      and every hop is HTTPS.
+    </p>
   </section>
 
   <section class="wrap" id="ipad">
