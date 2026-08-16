@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'" />
+  <title>dsh-share</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>dsh-share</h1>
+    <p class="tagline">Access your DeepSeek Harness workspace over a secure tunnel</p>
+  </header>
+
+  <section class="card">
+    <div class="status-row">
+      <span id="status-dot" class="dot"></span>
+      <span id="status-text">Idle</span>
+    </div>
+    <p id="status-message" class="muted"></p>
+    <p class="muted">dsh is running on <code id="dsh-port">localhost:3080</code>.</p>
+    <div class="btn-row">
+      <button id="start-btn" class="primary">Start</button>
+      <button id="stop-btn" disabled>Stop</button>
+      <button id="open-local-btn">Open local workspace setup</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Public URL</h2>
+    <div class="url-row">
+      <input id="url" type="text" readonly placeholder="Start the tunnel to get a URL" />
+      <button id="copy-btn" disabled>Copy</button>
+    </div>
+    <p class="muted">Anyone with this URL <em>and</em> the credentials below can reach your workspace.</p>
+    <div class="cred-row">
+      <label>Username</label>
+      <input id="username" type="text" readonly />
+    </div>
+    <div class="cred-row">
+      <label>Password</label>
+      <input id="password" type="text" readonly />
+      <button id="regenerate-btn">Regenerate</button>
+    </div>
+    <p class="muted">Share these with collaborators. Regenerating invalidates the old password immediately.</p>
+  </section>
+
+  <section id="mobile-card" class="card hidden">
+    <h2>Mobile access</h2>
+    <div id="qr"></div>
+    <div class="btn-row">
+      <button id="copy-uri-btn">Copy connection URI</button>
+    </div>
+    <p class="muted">Scan with the dsh-mobile app to connect from your phone, or with any camera to open the link.</p>
+  </section>
+
+  <section class="card">
+    <h2>Options</h2>
+    <label class="toggle-row">
+      <input type="checkbox" id="close-to-tray" />
+      <span>Keep sharing when I close the window</span>
+    </label>
+    <p class="muted">
+      With this on, closing the window hides dsh-share to the tray and the tunnel keeps
+      running. Quit from the tray (or Cmd+Q) to stop sharing.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>Log</h2>
+    <pre id="log"></pre>
+  </section>
+
+  <!-- First-run security warning -->
+  <div id="warning-overlay" class="overlay hidden">
+    <div class="modal">
+      <h2>⚠️ Security warning</h2>
+      <p>
+        This app opens a <strong>public tunnel</strong> to your machine. Anyone
+        with the URL <em>and</em> the credentials below can reach your dsh
+        workspace and, through it, your files.
+      </p>
+      <ul>
+        <li>Only share with people you trust.</li>
+        <li>Stop the tunnel when you're done.</li>
+        <li>Regenerate credentials if they leak.</li>
+        <li>Never run this on a machine you can't afford to expose.</li>
+      </ul>
+      <div class="btn-row">
+        <button id="ack-warning-btn" class="primary">I understand</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- dsh conflict warning (a dsh is already running on 3080) -->
+  <div id="conflict-overlay" class="overlay hidden">
+    <div class="modal">
+      <h2>⚠️ dsh is already running</h2>
+      <p>
+        A dsh instance appears to be running on port 3080. This app runs its
+        own dsh using the same <code>~/.dsh</code> config, so the two would
+        conflict (surfacing as an EPERM error / 502).
+      </p>
+      <p>Please stop your other dsh, then retry.</p>
+      <div class="btn-row">
+        <button id="conflict-stop-btn">Stop it for me</button>
+        <button id="conflict-retry-btn" class="primary">I've stopped it — retry</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../node_modules/qrcode-generator/dist/qrcode.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>
