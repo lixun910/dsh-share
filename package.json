@@ -48,7 +48,7 @@
       }
     ],
     "asarUnpack": [
-      "node_modules/@deepseek-ai/**"
+      "**/node_modules/**"
     ],
     "afterSign": "scripts/notarize.js",
     "mac": {
