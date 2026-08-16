@@ -102,6 +102,12 @@ nav {
   font-size: clamp(16px, 2.4vw, 19px);
 }
 .hero .tagline strong { color: var(--text); font-weight: 600; }
+.hero .version-note {
+  margin: 14px auto 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+.hero .version-note strong { color: var(--text); font-weight: 600; }
 
 .downloads {
   margin-top: 36px;
