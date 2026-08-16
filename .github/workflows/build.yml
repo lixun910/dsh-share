@@ -31,6 +31,17 @@ jobs:
           node-version: 20
           cache: npm
 
+      # node-pty (a native module pulled in by @deepseek-ai/dsh) is rebuilt for
+      # Electron during packaging. node-gyp needs Python with `distutils`
+      # (removed in Python 3.12) and, on Windows, the MSVC toolchain.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up MSVC (Windows)
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
       - name: Install dependencies
         run: npm ci
 

@@ -51,13 +51,18 @@ async function main() {
   const binDir = path.join(__dirname, '..', 'bin');
   fs.mkdirSync(binDir, { recursive: true });
 
-  const isTgz = process.platform !== 'win32';
+  // Asset naming differs by platform. macOS ships a .tgz (extract it); Linux
+  // and Windows ship a plain binary (copy it as-is). Newer cloudflared releases
+  // dropped the Linux .tgz, so always use the plain `cloudflared-linux-*` asset.
+  const isTgz = process.platform === 'darwin';
   const remoteName = process.platform === 'win32'
     ? 'cloudflared-windows-amd64.exe'
-    : `cloudflared-${key}.tgz`;
+    : process.platform === 'darwin'
+      ? `cloudflared-${key}.tgz`
+      : `cloudflared-${key}`; // linux: plain binary
   const url = `${BASE}/${remoteName}`;
 
-  const tmp = path.join(os.tmpdir(), `cloudflared-${key}.${isTgz ? 'tgz' : 'exe'}`);
+  const tmp = path.join(os.tmpdir(), `cloudflared-${key}.${isTgz ? 'tgz' : 'bin'}`);
   console.log(`Downloading cloudflared (${key})…`);
   await download(url, tmp);
 
