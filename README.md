@@ -1,8 +1,8 @@
 # dsh-share
 
-Access your [DeepSeek Harness](https://github.com/deepseek-ai/dsh) (dsh)
-workspace over a secure public tunnel, from a small desktop app — from your
-phone, or from anywhere with a public URL.
+Access your [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)
+(dsh) workspace over a secure public tunnel — from your phone, or from
+anywhere with a public URL.
 
 **Free, no account, no signup.** dsh-share uses a **Cloudflare quick tunnel**
 (`cloudflared`) to expose your local dsh web server over HTTPS. No Cloudflare
@@ -11,6 +11,17 @@ public `https://*.trycloudflare.com` URL you can open on any device.
 
 > **Built with DeepSeek v4 Flash.** The code in this repository was written by
 > the DeepSeek v4 Flash model.
+
+## Downloads
+
+Grab the latest installer for your platform from the
+[releases page](https://github.com/lixun910/dsh-share/releases):
+
+| Platform | Format |
+|---|---|
+| macOS | DMG / zip |
+| Windows | NSIS installer |
+| Linux | AppImage |
 
 ## How it works
 
@@ -76,12 +87,6 @@ The app bundles the pieces you'd otherwise wire by hand:
 `dsh web` only trusts loopback by default. To reach it from another device you
 must pass the current tunnel domain as `--trusted-host` — and the free-tier
 domain rotates on every restart. This app automates that whole dance.
-
-## Requirements
-
-- **cloudflared** — downloaded automatically into `bin/` on `npm install`, or
-  taken from your `PATH`. No account or token needed for quick tunnels.
-- **dsh** — resolved from `$DSH_BIN`, a bundled copy, or the npx cache.
 
 ## Run from source
 
