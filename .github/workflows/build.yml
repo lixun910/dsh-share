@@ -16,7 +16,10 @@ jobs:
           - os: macos-latest
             command: npm run dist:mac
             artifact: dsh-share-mac
-          - os: windows-latest
+          # Pin to windows-2022: the windows-latest runner now ships Visual
+          # Studio 18, which the bundled node-gyp (9.x) doesn't recognize when
+          # rebuilding node-pty. windows-2022 has VS 2022 (17), which it does.
+          - os: windows-2022
             command: npm run dist:win
             artifact: dsh-share-win
           - os: ubuntu-latest
@@ -52,7 +55,18 @@ jobs:
         run: node scripts/generate-icon.js
 
       - name: Build (${{ matrix.os }})
-        run: ${{ matrix.command }}
+        # Unset the signing/notarization env vars when their secrets are
+        # absent. An empty CSC_LINK makes electron-builder try to import a
+        # certificate from the empty path (which resolves to the repo root and
+        # fails with "not a file"), so we must not pass it through as "".
+        shell: bash
+        run: |
+          [ -z "$CSC_LINK" ] && unset CSC_LINK
+          [ -z "$CSC_KEY_PASSWORD" ] && unset CSC_KEY_PASSWORD
+          [ -z "$APPLE_ID" ] && unset APPLE_ID
+          [ -z "$APPLE_APP_SPECIFIC_PASSWORD" ] && unset APPLE_APP_SPECIFIC_PASSWORD
+          [ -z "$APPLE_TEAM_ID" ] && unset APPLE_TEAM_ID
+          ${{ matrix.command }}
         env:
           # macOS + Windows code signing (optional). When these secrets are
           # absent, electron-builder produces unsigned builds.

@@ -8,10 +8,10 @@
     "build": "tsc -p tsconfig.json",
     "start": "npm run build && electron .",
     "postinstall": "node scripts/download-cloudflared.js",
-    "dist": "npm run build && electron-builder",
-    "dist:mac": "npm run build && electron-builder --mac",
-    "dist:win": "npm run build && electron-builder --win",
-    "dist:linux": "npm run build && electron-builder --linux"
+    "dist": "npm run build && electron-builder --publish never",
+    "dist:mac": "npm run build && electron-builder --mac --publish never",
+    "dist:win": "npm run build && electron-builder --win --publish never",
+    "dist:linux": "npm run build && electron-builder --linux --publish never"
   },
   "dependencies": {
     "@deepseek-ai/dsh": "^0.1.0-rc.6",
