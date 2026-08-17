@@ -8,7 +8,8 @@ import { createAuthProxy, stopProxy, getFreePort, waitForPort, isPortInUse } fro
 import { startDsh, stopDsh } from './dsh';
 import { loadAuth, regenerateAuth } from './auth';
 import { loadSettings, saveSettings } from './settings';
-import type { Auth, SessionState, SessionStatus, Settings, StatusMessage } from './ipc';
+import { initUpdater } from './updater';
+import type { Auth, SessionState, SessionStatus, Settings, StatusMessage, UpdateStatus } from './ipc';
 
 const DSH_PORT = 3080;
 
@@ -34,10 +35,14 @@ let sessionState: SessionState = 'stopped';
 let startedAt: number | null = null;
 let tray: Tray | null = null;
 let isQuitting = false;
+// Auto-update (electron-updater). Null in dev — the app isn't packaged, so
+// there's no update server to hit and no signed app to replace.
+const updater = initUpdater((status) => send('update', status));
 
 function send(channel: 'status', data: StatusMessage): void;
 function send(channel: 'log', data: string): void;
-function send(channel: 'status' | 'log', data: StatusMessage | string): void {
+function send(channel: 'update', data: UpdateStatus): void;
+function send(channel: 'status' | 'log' | 'update', data: StatusMessage | string | UpdateStatus): void {
   if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.webContents.send(channel, data);
   }
@@ -364,10 +369,18 @@ ipcMain.handle('open-local', () => {
 ipcMain.handle('open-url', (_e, url: string) => shell.openExternal(url));
 ipcMain.handle('check-dsh-conflict', () => isPortInUse(DSH_PORT));
 ipcMain.handle('stop-dsh-on-port', () => killProcessOnPort(DSH_PORT));
+ipcMain.handle('update-check', () => updater?.check());
+ipcMain.handle('update-install', () => updater?.install());
 
 app.whenReady().then(() => {
   createWindow();
   createTray();
+  // Check for updates shortly after launch (packaged builds only). Errors are
+  // swallowed — an offline machine or a transient GitHub hiccup shouldn't
+  // bother the user; the check just runs again on the next launch.
+  if (updater) {
+    setTimeout(() => updater.check().catch(() => {}), 5000);
+  }
   app.on('activate', () => {
     // Dock click (macOS): show the hidden close-to-tray window, or recreate it
     // if it was genuinely closed.

@@ -94,6 +94,8 @@ The app bundles the pieces you'd otherwise wire by hand:
   dsh-mobile app to connect from your phone.
 - **Cross-platform builds** — DMG/zip (macOS), NSIS (Windows), AppImage
   (Linux), with optional code signing + notarization.
+- **Automatic app updates** — checks GitHub releases on launch, downloads the
+  new version in the background, and installs on quit or with one click.
 - **GitHub Actions CI** — builds all three platforms and attaches artifacts to
   releases on `v*` tags.
 
@@ -158,6 +160,16 @@ the bundled DeepSeek Harness current with **no manual steps**:
 If a previous run merged the PR but failed to cut the release, the next run
 detects the missing tag and cuts it without a new PR. Run it manually anytime
 with **Actions → update-dsh → Run workflow**.
+
+### Automatic app updates
+
+Installed copies of dsh-share update themselves via
+[electron-updater](https://www.electron.build/auto-update). On launch the app
+checks the GitHub releases page; when a newer version exists it downloads it in
+the background and installs it on quit — or immediately via the **Restart &
+install** button in the control window. Updates are signed and notarized like
+the initial install, so Gatekeeper accepts them. The `latest*.yml` manifests
+electron-updater reads are uploaded to each release by `build.yml`.
 
 ## How it works (under the hood)
 

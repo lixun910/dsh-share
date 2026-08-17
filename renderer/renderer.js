@@ -26,6 +26,9 @@ const ackWarningBtn = $('ack-warning-btn');
 const conflictOverlay = $('conflict-overlay');
 const conflictRetryBtn = $('conflict-retry-btn');
 const conflictStopBtn = $('conflict-stop-btn');
+const updateCard = $('update-card');
+const updateText = $('update-text');
+const updateInstallBtn = $('update-install-btn');
 
 let currentUrl = '';
 let currentAuth = null;
@@ -123,6 +126,29 @@ api.onStatus((s) => {
 });
 
 api.onLog((line) => appendLog(line));
+
+// Auto-update. With auto-download on, `available` is transient — the download
+// starts immediately and `downloading` follows. `checking` / `not-available` /
+// `error` hide the card: a failed check (offline, etc.) is not worth bothering
+// the user about — it just runs again on the next launch.
+api.onUpdate((s) => {
+  if (s.state === 'available' || s.state === 'downloading') {
+    updateCard.classList.remove('hidden');
+    updateText.textContent =
+      s.state === 'available'
+        ? `Downloading v${s.version}…`
+        : `Downloading v${s.version}… ${s.percent}%`;
+    updateInstallBtn.classList.add('hidden');
+  } else if (s.state === 'downloaded') {
+    updateCard.classList.remove('hidden');
+    updateText.textContent = `v${s.version} is ready. Restart to install.`;
+    updateInstallBtn.classList.remove('hidden');
+  } else {
+    updateCard.classList.add('hidden');
+  }
+});
+
+updateInstallBtn.addEventListener('click', () => api.installUpdate());
 
 async function startWithConflictCheck() {
   const conflict = await api.checkDshConflict();

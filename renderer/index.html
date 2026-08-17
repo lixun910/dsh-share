@@ -13,6 +13,15 @@
     <p class="tagline">Access your DeepSeek Harness workspace over a secure tunnel</p>
   </header>
 
+  <!-- Auto-update card. Hidden until an update is downloading or ready. -->
+  <section id="update-card" class="card hidden">
+    <h2>Update</h2>
+    <p id="update-text" class="muted"></p>
+    <div class="btn-row">
+      <button id="update-install-btn" class="primary hidden">Restart &amp; install</button>
+    </div>
+  </section>
+
   <section class="card">
     <div class="status-row">
       <span id="status-dot" class="dot"></span>

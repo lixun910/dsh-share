@@ -1,6 +1,6 @@
 {
   "name": "dsh-share",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Access your DeepSeek Harness (dsh) workspace over a secure public tunnel",
   "main": "out/main.js",
   "license": "MIT",
@@ -210,6 +210,7 @@
     "@deepseek-ai/node-addon-landlock-run": "^0.1.1",
     "@deepseek-ai/schemastery": "^3.18.1",
     "@cfworker/json-schema": "^4.1.1",
+    "electron-updater": "^6.8.9",
     "qrcode-generator": "^2.0.4"
   },
   "devDependencies": {
@@ -246,6 +247,11 @@
       "**/node_modules/**"
     ],
     "afterSign": "scripts/notarize.js",
+    "publish": {
+      "provider": "github",
+      "owner": "lixun910",
+      "repo": "dsh-share"
+    },
     "mac": {
       "target": [
         "dmg",

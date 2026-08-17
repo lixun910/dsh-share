@@ -33,6 +33,19 @@ export type StatusMessage =
 export type SessionState = 'starting' | 'tunnel-up' | 'running' | 'error' | 'stopped';
 
 /**
+ * Auto-update events pushed from the main process to the renderer on the
+ * `update` channel. `available` is transient — with auto-download on, the
+ * download starts immediately and `downloading` follows.
+ */
+export type UpdateStatus =
+  | { state: 'checking' }
+  | { state: 'available'; version: string }
+  | { state: 'not-available' }
+  | { state: 'downloading'; percent: number }
+  | { state: 'downloaded'; version: string }
+  | { state: 'error'; message: string };
+
+/**
  * The payload served at `/~dsh-share/session` (behind the same basic auth as
  * the rest of the tunnel). `connection` is present only while the proxy is
  * running; it carries the exact creds the live proxy uses plus the dsh:// URI,
@@ -64,6 +77,9 @@ export interface DshShareApi {
   openUrl(url: string): Promise<void>;
   checkDshConflict(): Promise<boolean>;
   stopDshOnPort(): Promise<boolean>;
+  checkForUpdates(): Promise<void>;
+  installUpdate(): Promise<void>;
   onStatus(cb: (status: StatusMessage) => void): void;
   onLog(cb: (line: string) => void): void;
+  onUpdate(cb: (status: UpdateStatus) => void): void;
 }

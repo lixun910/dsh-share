@@ -86,6 +86,7 @@ jobs:
             dist/*.zip
             dist/*.exe
             dist/*.AppImage
+            dist/latest*.yml
           if-no-files-found: error
 
   release:

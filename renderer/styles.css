@@ -33,6 +33,9 @@ header h1 { margin: 0; font-size: 22px; }
 
 .card h2 { margin: 0 0 10px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
 
+/* Auto-update card — accent border so it stands out when an update is ready. */
+#update-card { border-color: var(--accent); }
+
 .hidden { display: none; }
 
 #qr svg { display: block; margin: 0 auto; }
