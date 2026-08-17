@@ -12,6 +12,11 @@ public `https://*.trycloudflare.com` URL you can open on any device.
 > **Built with DeepSeek v4 Flash.** The code in this repository was written by
 > the DeepSeek v4 Flash model.
 
+> ⭐ **If dsh-share saves you an hour, [star the repo](https://github.com/lixun910/dsh-share)** — it helps others find it.
+
+<!-- TODO: add docs/demo.gif — 15s screen recording of Start → QR → phone -->
+![Demo](docs/demo.gif)
+
 ## Downloads
 
 Grab the latest installer for your platform from the
