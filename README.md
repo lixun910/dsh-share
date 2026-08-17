@@ -1,8 +1,12 @@
 # dsh-share
 
 Access your [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)
-(dsh) workspace over a secure public tunnel — from your phone, or from
-anywhere with a public URL.
+(dsh) workspace from your phone, your iPad, or any browser — over a secure,
+temporary public tunnel that exists only while you use it.
+
+dsh-share is built for **you** to reach your own DeepSeek Harness from your
+own devices. It's not a sharing tool: the URL and the generated password are
+meant for you, not to hand out.
 
 **Free, no account, no signup.** dsh-share uses a **Cloudflare quick tunnel**
 (`cloudflared`) to expose your local dsh web server over HTTPS. No Cloudflare
@@ -196,8 +200,11 @@ Credentials are generated on first launch, stored in
 
 - The tunnel uses **HTTPS** (Cloudflare) and **basic auth** (the local proxy).
 - Regenerating credentials invalidates the old password immediately.
-- **This exposes your machine to anyone with the URL and password.** Only share
-  with people you trust, and stop the tunnel when you're done.
+- **The URL and password let *you* reach your machine from your phone or iPad.**
+  dsh-share is designed for you to access your own DeepSeek Harness, not for
+  sharing — keep the link and credentials to yourself. The tunnel is temporary:
+  it's destroyed the moment you stop, so there's no permanent public endpoint.
+  Stop the tunnel when you're done.
 - Add workspaces on `http://localhost:3080` first — the file picker
   (`host.pickDirectory`) is loopback-only by design.
 - **Stop any dsh you already have running before using the app.** The app runs
