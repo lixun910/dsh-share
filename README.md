@@ -13,6 +13,8 @@ meant for you, not to hand out.
 account, no API token, no ngrok authtoken — just click **Start** and you get a
 public `https://*.trycloudflare.com` URL you can open on any device.
 
+![dsh-share control window](https://lixun910.github.io/dsh-share/images/dsh-share.png)
+
 > **Built with DeepSeek v4 Flash.** The code in this repository was written by
 > the DeepSeek v4 Flash model.
 
@@ -31,21 +33,6 @@ Grab the latest installer for your platform from the
 | macOS | DMG / zip |
 | Windows | NSIS installer |
 | Linux | AppImage |
-
-## Website
-
-The landing page lives on the `gh-pages` branch and is served at
-<https://lixun910.github.io/dsh-share/>. To update it:
-
-```bash
-git checkout gh-pages
-# edit index.html / css/style.css / images/
-git add -A && git commit -m "Update site"
-git push origin gh-pages
-```
-
-> The download buttons in `index.html` point at the current release's asset
-> URLs. When you cut a new release, update them to the new tag.
 
 ## How it works
 
