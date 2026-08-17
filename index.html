@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>dsh-share — Access your DeepSeek Harness workspace over a secure tunnel</title>
-  <meta name="description" content="dsh-share exposes your local DeepSeek Harness (dsh) web workspace over a free Cloudflare quick tunnel — no account, no signup. Open it from your phone, tablet, or anywhere.">
+  <meta name="description" content="dsh-share lets you reach your local DeepSeek Harness (dsh) web workspace from your phone, iPad, or any browser over a free, temporary Cloudflare quick tunnel — no account, no signup.">
   <link rel="icon" type="image/png" href="images/icon.png">
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -26,12 +26,13 @@
 
   <header class="hero wrap" id="download">
     <img class="app-icon" src="images/icon.png" alt="dsh-share app icon">
-    <h1>Access your <span class="accent">DeepSeek Harness</span> from anywhere</h1>
+    <h1>Access your <span class="accent">DeepSeek Harness</span> from your phone</h1>
     <p class="tagline">
-      <strong>dsh-share</strong> exposes your local
-      <a href="https://github.com/deepseek-ai/deepseek-harness">DeepSeek Harness</a> (dsh)
-      web workspace over a secure public tunnel — from your phone, your iPad, or
-      anywhere with a public URL. <strong>Free, no account, no signup.</strong>
+      <strong>dsh-share</strong> is built for <strong>you</strong> to reach your
+      local <a href="https://github.com/deepseek-ai/deepseek-harness">DeepSeek Harness</a>
+      (dsh) web workspace from your phone, your iPad, or any browser — over a
+      secure, temporary tunnel that exists only while you use it. It's not for
+      sharing: the URL and password are meant for you. <strong>Free, no account, no signup.</strong>
     </p>
     <p class="version-note">Bundled DeepSeek Harness <strong>v0.1.0-rc.6</strong></p>
 
@@ -76,8 +77,8 @@
     </div>
     <img class="howshot" src="images/dsh-how-it-works.jpeg" alt="dsh-share architecture: your desktop runs dsh-share, which starts the dsh web server, a local basic-auth proxy, and a cloudflared quick tunnel; Cloudflare terminates TLS and routes HTTPS to your machine; any device opens the public URL and authenticates with the generated username and password">
     <p class="caption">
-      Your desktop → Cloudflare → any device. The tunnel is free, needs no account,
-      and every hop is HTTPS.
+      Your desktop → Cloudflare → your phone or iPad. The tunnel is free, needs
+      no account, every hop is HTTPS, and it disappears the moment you stop.
     </p>
   </section>
 
