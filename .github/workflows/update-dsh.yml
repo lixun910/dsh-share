@@ -127,7 +127,13 @@ jobs:
       - name: Cut release
         if: steps.check.outputs.changed == 'true' || steps.tag.outputs.missing == 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
+          # Tag must be pushed with the PAT. GitHub's recursion guard does not
+          # create workflow runs for pushes made with GITHUB_TOKEN (only
+          # workflow_dispatch / repository_dispatch are exempt), so a
+          # bot-pushed tag never triggers the build workflow's tag run and the
+          # GitHub release is never created. A PAT push is a real actor and
+          # triggers it normally.
+          GH_TOKEN: ${{ secrets.DSH_AUTO_PAT }}
         run: |
           VERSION=${{ steps.version.outputs.version }}
           git fetch origin main
