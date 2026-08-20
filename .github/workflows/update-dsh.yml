@@ -68,6 +68,12 @@ jobs:
         id: pr
         uses: peter-evans/create-pull-request@v6
         with:
+          # Use the PAT, not GITHUB_TOKEN. A PR whose head commit is pushed by
+          # the bot token trips GitHub's recursion guard and its pull_request
+          # builds queue as action_required (waiting for a human to approve),
+          # which starves the "Wait for CI and merge" loop. Commits pushed by a
+          # real PAT identity run normally.
+          token: ${{ secrets.DSH_AUTO_PAT }}
           branch: deps/dsh-update
           title: 'chore: bump @deepseek-ai/dsh to ${{ steps.version.outputs.version }}'
           commit-message: 'chore: bump @deepseek-ai/dsh to ${{ steps.version.outputs.version }}'
@@ -85,7 +91,9 @@ jobs:
       - name: Wait for CI and merge
         if: steps.check.outputs.changed == 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
+          # Same PAT as the PR author, so checks polling and the merge run under
+          # the automation identity end to end.
+          GH_TOKEN: ${{ secrets.DSH_AUTO_PAT }}
         run: |
           PR_NUM="${{ steps.pr.outputs.pull-request-number }}"
           echo "Waiting for checks on PR #$PR_NUM"
